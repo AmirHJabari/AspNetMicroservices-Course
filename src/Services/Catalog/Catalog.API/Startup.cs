@@ -1,7 +1,9 @@
+using Catalog.API.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Catalog.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +27,11 @@ namespace Catalog.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mongoSettings = Configuration.GetSection("MongoSettings").Get<MongoSettings>();
+            services.AddSingleton<IMongoSettings>(mongoSettings);
+
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICatalogContext, CatalogContext>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -36,6 +43,14 @@ namespace Catalog.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            #region Seed Data
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var catalogContext = scope.ServiceProvider.GetRequiredService<ICatalogContext>();
+                SeedCatalogContext.SeedPrudocts(catalogContext.Products);
+            }
+            #endregion
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
