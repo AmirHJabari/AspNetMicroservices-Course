@@ -14,6 +14,17 @@ services:
      - "26002:6379"
     volumes:
      - basket_redis_data:/data
+
+  discount.db:
+    container_name: discount.db
+    environment:
+     - POSTGRES_USER=discount.api
+     - POSTGRES_PASSWORD=DisC0unt.Ap1@pass
+     - POSTGRES_DB=Discount
+    ports:
+     - "26003:5432"
+    volumes:
+     - discount_postgres_data:/var/lib/postgresql/data
      
   #portainer:
   #  container_name: portainer

@@ -5,6 +5,8 @@ services:
     image: mongo
   basket.db:
     image: redis
+  discount.db:
+    image: postgres
 
   #portainer:
   #  image: portainer/portainer-ce
@@ -24,4 +26,5 @@ services:
 volumes:
   catalog_mongo_data:
   basket_redis_data:
+  discount_postgres_data:
   #portainer_data:
