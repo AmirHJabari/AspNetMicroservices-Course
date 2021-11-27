@@ -13,7 +13,7 @@ services:
     ports:
      - "26002:6379"
     volumes:
-     - basket_redis_data:/
+     - basket_redis_data:/data
      
   #portainer:
   #  container_name: portainer
