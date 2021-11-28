@@ -39,6 +39,9 @@ namespace Discount.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using (var scope = app.ApplicationServices.CreateScope())
+                Initialize(scope.ServiceProvider);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -54,6 +57,15 @@ namespace Discount.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        /// <summary>
+        /// Initilizes the application requirements.
+        /// </summary>
+        /// <param name="services">The required services.</param>
+        private void Initialize(IServiceProvider services)
+        {
+            services.MigratePostgreSql(10);
         }
     }
 }

@@ -24,7 +24,6 @@ namespace Catalog.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var mongoSettings = Configuration.GetSection("MongoSettings").Get<MongoSettings>();
@@ -40,16 +39,10 @@ namespace Catalog.API
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            #region Seed Data
             using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var catalogContext = scope.ServiceProvider.GetRequiredService<ICatalogContext>();
-                SeedCatalogContext.SeedPrudocts(catalogContext.Products);
-            }
-            #endregion
+                Initialize(scope.ServiceProvider);
 
             if (env.IsDevelopment())
             {
@@ -66,6 +59,18 @@ namespace Catalog.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        /// <summary>
+        /// Initilizes the application requirements.
+        /// </summary>
+        /// <param name="services">The required services.</param>
+        private void Initialize(IServiceProvider services)
+        {
+            #region Seed Data
+            var catalogContext = services.GetRequiredService<ICatalogContext>();
+            SeedCatalogContext.SeedPrudocts(catalogContext.Products);
+            #endregion
         }
     }
 }
