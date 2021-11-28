@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Discount.API.Entities;
+using Discount.Core.Entities;
 
-namespace Discount.API.Repositories
+namespace Discount.Core.Repositories
 {
     public interface IDiscountRepository
     {

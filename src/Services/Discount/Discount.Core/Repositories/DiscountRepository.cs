@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discount.API.Entities;
-using Discount.API.Data;
+using Discount.Core.Entities;
+using Discount.Core.Data;
 using System.Threading;
 
-namespace Discount.API.Repositories
+namespace Discount.Core.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {

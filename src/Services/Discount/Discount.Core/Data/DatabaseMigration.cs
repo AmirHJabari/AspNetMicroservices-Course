@@ -5,14 +5,14 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Threading;
 
-namespace Discount.API.Data
+namespace Discount.Core.Data
 {
     public static class DatabaseMigration
     {
-        public static IServiceProvider MigratePostgreSql(this IServiceProvider services, int retry = 0)
+        public static IServiceProvider MigratePostgreSql<TLogger>(this IServiceProvider services, int retry = 0)
         {
             var postgresSettings = services.GetRequiredService<IPostgresSettings>();
-            var logger = services.GetRequiredService<ILogger<Program>>();
+            var logger = services.GetRequiredService<ILogger<TLogger>>();
             
             var TableName = postgresSettings.CouponTblName;
 

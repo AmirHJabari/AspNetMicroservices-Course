@@ -1,4 +1,4 @@
-﻿namespace Discount.API.Data
+﻿namespace Discount.Core.Data
 {
     public class PostgresSettings : IPostgresSettings
     {

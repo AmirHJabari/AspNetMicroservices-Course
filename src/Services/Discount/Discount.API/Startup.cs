@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discount.API.Data;
-using Discount.API.Repositories;
+using Discount.Core.Data;
+using Discount.Core.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +26,7 @@ namespace Discount.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var postgresSettings = Configuration.GetSection("PostgresSettings").Get<PostgresSettings>();
-            services.AddSingleton<IPostgresSettings>(postgresSettings);
-            services.AddSingleton<IDiscountRepository, DiscountRepository>();
+            services.AddPostgreSql(Configuration);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -65,7 +63,7 @@ namespace Discount.API
         /// <param name="services">The required services.</param>
         private void Initialize(IServiceProvider services)
         {
-            services.MigratePostgreSql(10);
+            services.MigratePostgreSql<Program>(10);
         }
     }
 }
