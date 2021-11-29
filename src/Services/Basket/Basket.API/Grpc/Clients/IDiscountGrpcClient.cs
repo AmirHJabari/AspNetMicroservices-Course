@@ -9,6 +9,7 @@ namespace Basket.API.Grpc
 {
     public interface IDiscountGrpcClient
     {
-        Task<CouponModel> GetDiscount(string productId, CancellationToken cancellationToken = default);
+        Task<CouponModel> GetDiscountAsync(string productId, CancellationToken cancellationToken = default);
+        Task<ManyDiscountModel> GetManyDiscountAmountAsync(IEnumerable<string> productIds, CancellationToken cancellationToken = default);
     }
 }

@@ -18,7 +18,7 @@ namespace Basket.API.Grpc
             this._discountClient = discountClient;
         }
 
-        public async Task<CouponModel> GetDiscount(string productId, CancellationToken cancellationToken = default)
+        public async Task<CouponModel> GetDiscountAsync(string productId, CancellationToken cancellationToken = default)
         {
             var request = new DiscountByProductId() { ProductId = productId };
             try
@@ -29,6 +29,14 @@ namespace Basket.API.Grpc
             {
                 return null;
             }
+        }
+
+        public async Task<ManyDiscountModel> GetManyDiscountAmountAsync(IEnumerable<string> productIds, CancellationToken cancellationToken = default)
+        {
+            var request = new ManyDiscountByProductId();
+            request.ProductIds.AddRange(productIds);
+
+            return await _discountClient.GetManyDiscountsByProductIdAsync(request, cancellationToken: cancellationToken);
         }
     }
 }

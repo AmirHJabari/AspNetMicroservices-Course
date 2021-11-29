@@ -5,6 +5,9 @@ option csharp_namespace = "Discount.Grpc.Protos";
 service Discount {
 	rpc GetById (DiscountById) returns (CouponModel);
 	rpc GetByProductId (DiscountByProductId) returns (CouponModel);
+
+	rpc GetManyDiscountsById (ManyDiscountById) returns (ManyDiscountModel);
+	rpc GetManyDiscountsByProductId (ManyDiscountByProductId) returns (ManyDiscountModel);
 	
 	rpc Create (CouponModel) returns (ObjectResult);
 	rpc Update (CouponModel) returns (ObjectResult);
@@ -13,15 +16,21 @@ service Discount {
 }
 
 message DiscountById {
-	string id = 1;
+	int32 id = 1;
 }
-
-message ObjectResult {
-	bool success = 1;
+message ManyDiscountById {
+	repeated int32 ids = 1;
 }
 
 message DiscountByProductId {
 	string productId = 1;
+}
+message ManyDiscountByProductId {
+	repeated string productIds = 1;
+}
+
+message ObjectResult {
+	bool success = 1;
 }
 
 message CouponModel {
@@ -29,5 +38,8 @@ message CouponModel {
 	string productId = 2;
 	string productName = 3;
     string description = 4;
-    float Amount = 5;
+    float amount = 5;
+}
+message ManyDiscountModel {
+	repeated float amounts = 1;
 }

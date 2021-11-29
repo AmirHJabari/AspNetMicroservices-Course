@@ -45,6 +45,31 @@ namespace Discount.Grpc.Services
             return _mapper.Map<CouponModel>(coupon);
         }
 
+        public override async Task<ManyDiscountModel> GetManyDiscountsById(ManyDiscountById request, ServerCallContext context)
+        {
+            var result = new ManyDiscountModel();
+
+            foreach (var id in request.Ids)
+            {
+                var discount = await this._discountRepository.GetDiscountAmountAsync(id, context.CancellationToken);
+                result.Amounts.Add((float)discount);
+            }
+
+            return result;
+        }
+        public override async Task<ManyDiscountModel> GetManyDiscountsByProductId(ManyDiscountByProductId request, ServerCallContext context)
+        {
+            var result = new ManyDiscountModel();
+
+            foreach (var productId in request.ProductIds)
+            {
+                var discount = await this._discountRepository.GetDiscountAmountAsync(productId, context.CancellationToken);
+                result.Amounts.Add((float)discount);
+            }
+
+            return result;
+        }
+
         public override async Task<ObjectResult> Create(CouponModel request, ServerCallContext context)
         {
             var coupon = _mapper.Map<Coupon>(request);

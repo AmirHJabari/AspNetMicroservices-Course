@@ -33,11 +33,12 @@ namespace Basket.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ShoppingCart>> Post([FromBody] ShoppingCart basket, CancellationToken cancellationToken)
         {
-            foreach (var item in basket.Items)
+            if (basket.Items.Any())
             {
-                var discount = await _discountClient.GetDiscount(item.ProductId, cancellationToken);
-                if (discount is not null)
-                    item.Price -= (decimal) discount.Amount;
+                var discounts = await _discountClient.GetManyDiscountAmountAsync(basket.Items.Select(i => i.ProductId), cancellationToken);
+
+                for (int i = 0; i < discounts.Amounts.Count; i++)
+                    basket.Items[i].Price -= (decimal)discounts.Amounts[i];
             }
 
             await this._basketRepository.SetBasketAsync(basket, cancellationToken);

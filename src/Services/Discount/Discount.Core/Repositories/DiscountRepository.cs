@@ -80,6 +80,28 @@ namespace Discount.Core.Repositories
                 );
         }
 
+        public async Task<decimal> GetDiscountAmountAsync(string productId, CancellationToken cancellationToken = default)
+        {
+            using var conn = NewConnection();
+
+            return await conn.QueryFirstOrDefaultAsync<decimal>(new CommandDefinition(
+                                $"SELECT Amount FROM {CouponTbl} WHERE ProductId = @productId;",
+                                new { productId },
+                                cancellationToken: cancellationToken)
+                );
+        }
+
+        public async Task<decimal> GetDiscountAmountAsync(int id, CancellationToken cancellationToken = default)
+        {
+            using var conn = NewConnection();
+
+            return await conn.QueryFirstOrDefaultAsync<decimal>(new CommandDefinition(
+                                $"SELECT Amount FROM {CouponTbl} WHERE Id = @id;",
+                                new { id },
+                                cancellationToken: cancellationToken)
+                );
+        }
+
         public async Task<bool> UpdateCouponAsync(Coupon coupon, CancellationToken cancellationToken = default)
         {
             using var conn = NewConnection();
