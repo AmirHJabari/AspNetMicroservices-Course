@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Basket.API.Grpc;
 using Basket.API.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,16 @@ namespace Basket.API
                 options.Configuration = Configuration.GetConnectionString("Redis");
                 options.InstanceName = Configuration.GetValue<string>("RedisInstanceName");
             });
+
+            #region Add Grpc
+            var grpcSettings = Configuration.GetSection("GrpcSettings").Get<GrpcSettings>();
+            services.AddSingleton<IGrpcSettings>(grpcSettings);
+
+            services.AddGrpcClient<Discount.Grpc.Protos.Discount.DiscountClient>(options => 
+                        options.Address = new Uri(grpcSettings.DiscountGrpcUrl)
+            );
+            services.AddScoped<IDiscountGrpcClient, DiscountGrpcClient>();
+            #endregion
 
             services.AddScoped<IBasketRepository, BasketRepository>();
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Basket.API.Repositories;
 using Basket.API.Entities;
 using System.Threading;
+using Basket.API.Grpc;
 
 namespace Basket.API.Controllers
 {
@@ -14,10 +15,12 @@ namespace Basket.API.Controllers
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _basketRepository;
+        private readonly IDiscountGrpcClient _discountClient;
 
-        public BasketController(IBasketRepository basketRepository)
+        public BasketController(IBasketRepository basketRepository, IDiscountGrpcClient discountClient)
         {
             this._basketRepository = basketRepository;
+            this._discountClient = discountClient;
         }
 
         [HttpGet("{username}")]
@@ -30,6 +33,12 @@ namespace Basket.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ShoppingCart basket, CancellationToken cancellationToken)
         {
+            foreach (var item in basket.Items)
+            {
+                var discount = await _discountClient.GetDiscount(item.ProductId, cancellationToken);
+                item.Price -= (decimal) discount.Amount;
+            }
+
             await this._basketRepository.SetBasketAsync(basket, cancellationToken);
             return CreatedAtAction(nameof(Get), new { basket.UserName }, basket);
         }
