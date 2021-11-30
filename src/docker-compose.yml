@@ -13,21 +13,44 @@ services:
 
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
+    depends_on:
+     - catalog.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Catalog/Catalog.API/Dockerfile
 
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
+    depends_on:
+      - basket.db
+      - discount.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
 
   discount.api:
     image: ${DOCKER_REGISTRY-}discountapi
+    depends_on:
+     - discount.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Discount/Discount.API/Dockerfile
+
+  discount.grpc:
+    image: ${DOCKER_REGISTRY-}discountgrpc
+    depends_on:
+     - discount.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.Grpc/Dockerfile
 
 volumes:
   catalog_mongo_data:

@@ -23,16 +23,19 @@ namespace Discount.API
         }
 
         public IConfiguration Configuration { get; }
+        private bool IsSwaggerOn => Configuration.GetValue<bool>("IsSwaggerOn");
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddPostgreSql(Configuration);
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Discount.API", Version = "v1" });
-            });
+
+            if (IsSwaggerOn)
+                services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Discount.API", Version = "v1" });
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,6 +46,10 @@ namespace Discount.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+
+            if (IsSwaggerOn)
+            {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Discount.API v1"));
             }
