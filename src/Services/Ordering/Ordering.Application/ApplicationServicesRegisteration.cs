@@ -8,7 +8,7 @@ namespace Ordering.Application
 {
     public static class ApplicationServicesRegisteration
     {
-        public static IServiceCollection AddApplicationServices(IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
             

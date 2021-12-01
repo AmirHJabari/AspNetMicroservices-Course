@@ -65,7 +65,7 @@ namespace Ordering.Application.Features.Orders.Commands.CheckoutOrder
         {
             var email = new Email
             {
-                To = "amir@email.com",
+                To = "amirhamzehjabari@gmail.com",
                 Subject = "Order checkedout",
                 Body = "The order checkedout."
             };
