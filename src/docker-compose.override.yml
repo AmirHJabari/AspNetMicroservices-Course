@@ -2,21 +2,18 @@ version: '3.4'
 
 services:
   catalog.db:
-    container_name: catalog.db
     ports:
      - "26001:27017"
     volumes:
      - catalog_mongo_data:/data/db
 
   basket.db:
-    container_name: basket.db
     ports:
      - "26002:6379"
     volumes:
      - basket_redis_data:/data
 
   discount.db:
-    container_name: discount.db
     environment:
      - POSTGRES_USER=discount.api
      - POSTGRES_PASSWORD=DisC0unt.Ap1@pass
@@ -26,6 +23,12 @@ services:
     volumes:
      - discount_postgres_data:/var/lib/postgresql/data
      
+  ordering.db:
+    environment:
+     - "SA_PASSWORD=Your_password123"
+    ports:
+     - "26004:1433"
+
   #portainer:
   #  container_name: portainer
   #  ports:
@@ -36,21 +39,21 @@ services:
   #   - /var/run/docker.sock:/var/run/docker.sock
 
   catalog.api:
-    container_name: catalog.api
     ports:
       - "10001:80"
 
   basket.api:
-    container_name: basket.api
     ports:
       - "10002:80"
 
   discount.api:
-    container_name: discount.api
     ports:
       - "10003:80"
 
   discount.grpc:
-    container_name: discount.grpc
     ports:
       - "10004:80"
+
+  ordering.api:
+    ports:
+      - "10005:80"

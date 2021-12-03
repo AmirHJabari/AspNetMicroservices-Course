@@ -3,15 +3,27 @@ version: '3.4'
 services:
   catalog.db:
     image: mongo
+    container_name: catalog.db
+
   basket.db:
     image: redis
+    container_name: basket.db
+
   discount.db:
     image: postgres
+    container_name: discount.db
 
+  ordering.db:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: ordering.db
+    environment:
+     - "ACCEPT_EULA=Y"
+     
   #portainer:
   #  image: portainer/portainer-ce
 
   catalog.api:
+    container_name: catalog.api
     image: ${DOCKER_REGISTRY-}catalogapi
     depends_on:
      - catalog.db
@@ -22,6 +34,7 @@ services:
       dockerfile: Services/Catalog/Catalog.API/Dockerfile
 
   basket.api:
+    container_name: basket.api
     image: ${DOCKER_REGISTRY-}basketapi
     depends_on:
       - basket.db
@@ -33,6 +46,7 @@ services:
       dockerfile: Services/Basket/Basket.API/Dockerfile
 
   discount.api:
+    container_name: discount.api
     image: ${DOCKER_REGISTRY-}discountapi
     depends_on:
      - discount.db
@@ -43,6 +57,7 @@ services:
       dockerfile: Services/Discount/Discount.API/Dockerfile
 
   discount.grpc:
+    container_name: discount.grpc
     image: ${DOCKER_REGISTRY-}discountgrpc
     depends_on:
      - discount.db
@@ -52,8 +67,20 @@ services:
       context: .
       dockerfile: Services/Discount/Discount.Grpc/Dockerfile
 
+  ordering.api:
+    container_name: ordering.api
+    image: ${DOCKER_REGISTRY-}orderingapi
+    depends_on:
+     - ordering.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
+
 volumes:
   catalog_mongo_data:
   basket_redis_data:
   discount_postgres_data:
   #portainer_data:
+  
