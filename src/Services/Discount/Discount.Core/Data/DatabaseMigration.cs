@@ -53,7 +53,7 @@ namespace Discount.Core.Data
 
                     break;
                 }
-                catch (NpgsqlException ex)
+                catch (NpgsqlException ex) when (tried < retry - 1) // don't catch in the last try
                 {
                     logger.LogError(ex, "Migrating postresql database failed.");
                     Thread.Sleep(2000);
