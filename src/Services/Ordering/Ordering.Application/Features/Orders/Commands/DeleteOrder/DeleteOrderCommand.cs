@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Ordering.Application.Contracts.Infrastructure;
 using Ordering.Application.Contracts.Persistence;
+using Ordering.Application.Exceptions;
 using Ordering.Application.Features.Orders.Commands.CheckoutOrder;
 
 namespace Ordering.Application.Features.Orders.Commands.DeleteOrder
@@ -36,7 +37,10 @@ namespace Ordering.Application.Features.Orders.Commands.DeleteOrder
 
         public async Task<Unit> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
         {
-            await _repository.DeleteByIdAsync(request.Id);
+            var success = await _repository.DeleteByIdAsync(request.Id, cancellationToken);
+
+            if (!success)
+                throw new NotFoundException($"There is no order with id of '{request.Id}'.");
 
             return Unit.Value;
         }

@@ -12,7 +12,7 @@ using Ordering.Infrastructure.Persistence;
 
 namespace Ordering.Infrastructure.Repositories
 {
-    public class RepositoryBase<TEntity, TKey> : IAsyncRepository<TEntity, TKey> 
+    public class RepositoryBase<TEntity, TKey> : IAsyncRepository<TEntity, TKey>
         where TEntity : EntityBase<TKey>, new()
     {
         protected readonly OrderDbContext dbContext;
@@ -68,7 +68,7 @@ namespace Ordering.Infrastructure.Repositories
 
             if (predicate is not null)
                 query = query.Where(predicate);
-            
+
             if (orderBy is not null)
                 query = orderBy(query);
 
@@ -77,7 +77,7 @@ namespace Ordering.Infrastructure.Repositories
 
         public virtual async Task<TEntity> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
         {
-            return await entities.FindAsync(id, cancellationToken);
+            return await entities.FirstOrDefaultAsync(e => e.Id.Equals(id), cancellationToken);
         }
 
         public virtual async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
@@ -99,14 +99,14 @@ namespace Ordering.Infrastructure.Repositories
             return dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual Task DeleteByIdAsync(TKey id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteByIdAsync(TKey id, CancellationToken cancellationToken = default)
         {
-            var entity = new TEntity()
-            {
-                Id = id
-            };
+            var entity = await this.GetByIdAsync(id, cancellationToken);
+            if (entity == default)
+                return false;
 
-            return this.DeleteAsync(entity, cancellationToken);
+            await this.DeleteAsync(entity, cancellationToken);
+            return true;
         }
     }
 

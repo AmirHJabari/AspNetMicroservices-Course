@@ -51,7 +51,7 @@ namespace Ordering.Application.Features.Orders.Commands.UpdateOrder
 
         public async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _repository.GetByIdAsync(request.Id);
+            var order = await _repository.GetByIdAsync(request.Id, cancellationToken);
 
             if (order is null)
             {

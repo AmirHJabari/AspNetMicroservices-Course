@@ -27,7 +27,12 @@ namespace Ordering.Application.Contracts.Persistence
 		Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 		Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 		Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
-		Task DeleteByIdAsync(TKey id, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Deletes the entity with <paramref name="id"/>.
+		/// </summary>
+		/// <param name="id">Id of the entity to delete.</param>
+		/// <returns>True if entity exists and deleted successfully, false otherwise.</returns>
+		Task<bool> DeleteByIdAsync(TKey id, CancellationToken cancellationToken = default);
 	}
 
 	public interface IAsyncRepository<TEntity> : IAsyncRepository<TEntity, int>
