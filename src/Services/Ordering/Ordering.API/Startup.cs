@@ -1,3 +1,5 @@
+using EventBus.Messages.Events;
+using EventBus.Messages.Common;
 using Ordering.Application;
 using Ordering.Infrastructure;
 using System;
@@ -15,6 +17,8 @@ using Microsoft.OpenApi.Models;
 using Ordering.API.Extensions;
 using Ordering.Infrastructure.Persistence;
 using System.Threading;
+using MassTransit;
+using Ordering.API.EventBusConsumers;
 
 namespace Ordering.API
 {
@@ -32,6 +36,27 @@ namespace Ordering.API
         {
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
+
+            services.AddAutoMapper(typeof(Program));
+
+            #region Add MassTransit and RabbitMq
+            var massTransitSettings = Configuration.GetSection("MassTransitSettings").Get<MassTransitSettings>();
+            services.AddSingleton<IMassTransitSettings>(massTransitSettings);
+
+            services.AddMassTransit(config =>
+            {
+                config.AddConsumer<BasketCheckoutConsumer>();
+                config.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(massTransitSettings.RabbitMqHostUrl);
+                    cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, configEndpoint =>
+                    {
+                        configEndpoint.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
+                    });
+                });
+            });
+            services.AddMassTransitHostedService();
+            #endregion
 
             services.AddControllers();
 
