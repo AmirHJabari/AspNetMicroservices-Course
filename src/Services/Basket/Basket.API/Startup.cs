@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Basket.API.Grpc;
 using Basket.API.Repositories;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,8 @@ namespace Basket.API
                 options.InstanceName = Configuration.GetValue<string>("RedisInstanceName");
             });
 
+            services.AddAutoMapper(typeof(Program));
+
             #region Add Grpc
             var grpcSettings = Configuration.GetSection("GrpcSettings").Get<GrpcSettings>();
             services.AddSingleton<IGrpcSettings>(grpcSettings);
@@ -41,6 +44,20 @@ namespace Basket.API
                         options.Address = new Uri(grpcSettings.DiscountGrpcUrl)
             );
             services.AddScoped<IDiscountGrpcClient, DiscountGrpcClient>();
+            #endregion
+
+            #region Add MassTransit and RabbitMq
+            var massTransitSettings = Configuration.GetSection("MassTransitSettings").Get<MassTransitSettings>();
+            services.AddSingleton<IMassTransitSettings>(massTransitSettings);
+
+            services.AddMassTransit(config =>
+            {
+                config.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(massTransitSettings.RabbitMqHostUrl);
+                });
+            });
+            services.AddMassTransitHostedService();
             #endregion
 
             services.AddScoped<IBasketRepository, BasketRepository>();
