@@ -29,11 +29,16 @@ services:
     ports:
      - "26004:1433"
 
+  rabbitmq:
+    ports:
+      - "11003:5672"  # RabbitMq Broker
+      - "11004:15672" # RabbitMq Management Portal
+
   #portainer:
   #  container_name: portainer
   #  ports:
-  #   - "8000:8000"
-  #   - "9000:9000"
+  #   - "11001:8000"
+  #   - "11002:9000"
   #  volumes:
   #   - portainer_data:/data
   #   - /var/run/docker.sock:/var/run/docker.sock

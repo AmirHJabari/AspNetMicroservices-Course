@@ -6,11 +6,11 @@ services:
     container_name: catalog.db
 
   basket.db:
-    image: redis
+    image: redis:alpine
     container_name: basket.db
 
   discount.db:
-    image: postgres
+    image: postgres:alpine
     container_name: discount.db
 
   ordering.db:
@@ -19,6 +19,10 @@ services:
     environment:
      - "ACCEPT_EULA=Y"
      
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq
+
   #portainer:
   #  image: portainer/portainer-ce
 
@@ -28,7 +32,7 @@ services:
     depends_on:
      - catalog.db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Catalog/Catalog.API/Dockerfile
@@ -37,8 +41,9 @@ services:
     container_name: basket.api
     image: ${DOCKER_REGISTRY-}basketapi
     depends_on:
-      - basket.db
-      - discount.grpc
+     - basket.db
+     - discount.grpc
+     - rabbitmq
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     build:
@@ -51,7 +56,7 @@ services:
     depends_on:
      - discount.db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Discount/Discount.API/Dockerfile
@@ -72,8 +77,9 @@ services:
     image: ${DOCKER_REGISTRY-}orderingapi
     depends_on:
      - ordering.db
+     - rabbitmq
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_ENVIRONMENT=Docker
     build:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
