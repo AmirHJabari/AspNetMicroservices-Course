@@ -1,0 +1,8 @@
+{
+  "GlobalConfiguration": {
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Rate limit exceeded, use 'X-Rate-Limit' and 'Retry-After' headers for more info!"
+    }
+  }
+}
