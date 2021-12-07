@@ -47,7 +47,7 @@ namespace Basket.API.Controllers
                 var discounts = await _discountClient.GetManyDiscountAmountAsync(basket.Items.Select(i => i.ProductId), cancellationToken);
 
                 for (int i = 0; i < discounts.Amounts.Count; i++)
-                    basket.Items[i].Price -= (decimal)discounts.Amounts[i];
+                    basket.Items[i].Price =  Math.Max(.99M, basket.Items[i].Price - (decimal)discounts.Amounts[i]);
             }
 
             await this._basketRepository.SetBasketAsync(basket, cancellationToken);
