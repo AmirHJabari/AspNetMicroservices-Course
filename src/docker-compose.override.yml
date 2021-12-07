@@ -62,3 +62,15 @@ services:
   ordering.api:
     ports:
       - "10005:80"
+
+  ocelotapigw:
+    ports:
+      - "10006:80"
+
+  shopping.aggregator:
+    ports:
+      - "10007:80"
+
+  aspnetrunbasics:
+    ports:
+      - "10008:80"

@@ -84,9 +84,46 @@ services:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
 
+  ocelotapigw:
+    container_name: ocelotapigw
+    image: ${DOCKER_REGISTRY-}ocelotapigw
+    depends_on:
+     - catalog.api
+     - basket.api
+     - discount.api
+     - ordering.api
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: .
+      dockerfile: ApiGateways/OcelotApiGw/Dockerfile
+
+  shopping.aggregator:
+    container_name: shopping.aggregator
+    image: ${DOCKER_REGISTRY-}shoppingaggregator
+    depends_on:
+     - catalog.api
+     - basket.api
+     - ordering.api
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: .
+      dockerfile: ApiGateways/Shopping.Aggregator/Dockerfile
+
+  aspnetrunbasics:
+    container_name: aspnetrunbasics
+    image: ${DOCKER_REGISTRY-}aspnetrunbasics
+    depends_on:
+     - ocelotapigw
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: .
+      dockerfile: WebApps/AspnetRunBasics/Dockerfile
+
 volumes:
   catalog_mongo_data:
   basket_redis_data:
   discount_postgres_data:
   #portainer_data:
-  
